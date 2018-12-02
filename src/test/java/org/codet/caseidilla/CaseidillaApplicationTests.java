@@ -1,4 +1,4 @@
-package org.codet.Caseidilla;
+package org.codet.caseidilla;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
