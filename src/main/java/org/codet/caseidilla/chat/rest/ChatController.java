@@ -1,22 +1,13 @@
 package org.codet.caseidilla.chat.rest;
 
-import java.util.List;
-
-import org.codet.caseidilla.chat.dto.ChangeDialogNameRequestDto;
-import org.codet.caseidilla.chat.dto.DialogDto;
-import org.codet.caseidilla.chat.dto.HideDialogRequestDto;
-import org.codet.caseidilla.chat.dto.MessageDto;
+import lombok.RequiredArgsConstructor;
+import org.codet.caseidilla.chat.dto.*;
 import org.codet.caseidilla.chat.service.DialogService;
 import org.codet.caseidilla.chat.service.MessageService;
 import org.codet.caseidilla.user.credentials.dto.PinDto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,8 +33,12 @@ public class ChatController {
     }
 
     @PostMapping("/{login}/dialog/send")
-    public void sendMessage() {
-        throw new UnsupportedOperationException("Messengers does not do this kind of things");
+    public void sendMessage(@RequestParam SendMessageRequestDto sendMessage, @PathVariable String login) {
+        messageService.sendMessage(IncomingMessageDto.builder()
+                .body(sendMessage.getBody())
+                .to(sendMessage.getParticipant())
+                .from(login)
+                .build());
     }
 
     @PostMapping("/{login}/dialog/changeName")

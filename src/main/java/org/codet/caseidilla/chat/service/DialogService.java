@@ -1,11 +1,12 @@
 package org.codet.caseidilla.chat.service;
 
-import java.util.List;
-
 import org.codet.caseidilla.chat.dto.ChangeDialogNameRequestDto;
 import org.codet.caseidilla.chat.dto.DialogDto;
 import org.codet.caseidilla.chat.dto.HideDialogRequestDto;
+import org.codet.caseidilla.chat.entity.Dialog;
 import org.codet.caseidilla.user.credentials.dto.PinDto;
+
+import java.util.List;
 
 public interface DialogService {
 
@@ -16,4 +17,6 @@ public interface DialogService {
     void changeName(ChangeDialogNameRequestDto request, String login);
 
     void hideDialog(HideDialogRequestDto request, String login);
+
+    Dialog findAndValidateDialog(String login, String participant);
 }

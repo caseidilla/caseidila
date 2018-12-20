@@ -1,31 +1,26 @@
 package org.codet.caseidilla.chat.service.impl;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.codet.caseidilla.chat.dto.ChangeDialogNameRequestDto;
 import org.codet.caseidilla.chat.dto.DialogDto;
 import org.codet.caseidilla.chat.dto.HideDialogRequestDto;
 import org.codet.caseidilla.chat.entity.Dialog;
-import org.codet.caseidilla.chat.repository.DialogRepository;
 import org.codet.caseidilla.chat.service.DialogService;
 import org.codet.caseidilla.exception.CaseidillaException;
 import org.codet.caseidilla.user.credentials.dto.PinDto;
 import org.codet.caseidilla.user.entity.User;
 import org.codet.caseidilla.user.repository.UserRepository;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class DialogServiceImpl implements DialogService {
 
-    private final ConversionService conversionService;
-    private final DialogRepository dialogRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -87,7 +82,7 @@ public class DialogServiceImpl implements DialogService {
     @Override
     @Transactional
     public void changeName(ChangeDialogNameRequestDto request, String login) {
-        Dialog dialog = findDialog(login, request.getParticipant());
+        Dialog dialog = findAndValidateDialog(login, request.getParticipant());
         dialog.setName(request.getName());
     }
 
@@ -102,10 +97,11 @@ public class DialogServiceImpl implements DialogService {
         if (!request.getPin().equals(user.getPin())) {
             throw new CaseidillaException("Wrong pin");
         }
-        findDialog(login, request.getParticipant()).setHidden(true);
+        findAndValidateDialog(login, request.getParticipant()).setHidden(true);
     }
 
-    private Dialog findDialog(String login, String participant) {
+    @Override
+    public Dialog findAndValidateDialog(String login, String participant) {
         Set<Dialog> dialogs = userRepository.findById(login)
                 .orElseThrow(() -> new CaseidillaException("User not found"))
                 .getDialogs();
@@ -116,5 +112,4 @@ public class DialogServiceImpl implements DialogService {
                 .findFirst()
                 .orElseThrow(() -> new CaseidillaException("There is no dialog with this users"));
     }
-
 }
