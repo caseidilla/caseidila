@@ -1,5 +1,7 @@
 package org.codet.caseidilla.user.rest;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.codet.caseidilla.user.credentials.dto.PinDto;
 import org.codet.caseidilla.user.credentials.dto.UserLoginDto;
 import org.codet.caseidilla.user.credentials.dto.UserRegistrationDto;
@@ -7,18 +9,12 @@ import org.codet.caseidilla.user.credentials.service.CredentialsService;
 import org.codet.caseidilla.user.secret.SecretDto;
 import org.codet.caseidilla.user.secret.service.SecretService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
 @AllArgsConstructor
+@RequestMapping("/api")
 public class UserController {
 
     private final SecretService secretService;
