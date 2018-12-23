@@ -1,10 +1,13 @@
 package org.codet.caseidilla.chat.service.impl;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.RequiredArgsConstructor;
 import org.codet.caseidilla.chat.dto.ChangeDialogNameRequestDto;
 import org.codet.caseidilla.chat.dto.DialogDto;
 import org.codet.caseidilla.chat.dto.HideDialogRequestDto;
+import org.codet.caseidilla.chat.dto.NewDialogDto;
 import org.codet.caseidilla.chat.entity.Dialog;
+import org.codet.caseidilla.chat.repository.DialogRepository;
 import org.codet.caseidilla.chat.service.DialogService;
 import org.codet.caseidilla.exception.CaseidillaException;
 import org.codet.caseidilla.user.credentials.dto.PinDto;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 public class DialogServiceImpl implements DialogService {
 
     private final UserRepository userRepository;
+    private final DialogRepository dialogRepository;
 
     @Override
     public List<DialogDto> listDialogs(String login) {
@@ -54,6 +58,9 @@ public class DialogServiceImpl implements DialogService {
     public List<DialogDto> listHiddenDialogs(PinDto request, String login) {
         User user = userRepository.findById(login)
                 .orElseThrow(() -> new CaseidillaException("User not found"));
+        if (user.getPin() == null) {
+            throw new CaseidillaException("Pin is not set up");
+        }
         if (!user.getPin().equals(request.getPin())) {
             throw new CaseidillaException("Wrong pin");
         }
@@ -111,5 +118,29 @@ public class DialogServiceImpl implements DialogService {
                 .filter(dialog -> dialog.getUsers().contains(participantUser))
                 .findFirst()
                 .orElseThrow(() -> new CaseidillaException("There is no dialog with this users"));
+    }
+
+    @Override
+    @Transactional
+    public void createDialog(NewDialogDto request, String login) {
+        User user = userRepository.findById(login)
+                .orElseThrow(() -> new CaseidillaException("User not found"));
+        User participantUser = userRepository.findById(request.getParticipant())
+                .orElseThrow(() -> new CaseidillaException("Can't find participant"));
+        boolean isDialogExists = user.getDialogs()
+                .stream()
+                .anyMatch(dialog -> dialog.getUsers().contains(participantUser));
+        if (isDialogExists) {
+            throw new CaseidillaException("Dialog already exists");
+        }
+
+        Dialog newDialog = Dialog.builder()
+                .hidden(false)
+                .secret(request.isSecret())
+                .users(ImmutableSet.of(user, participantUser))
+                .build();
+        newDialog = dialogRepository.save(newDialog);
+        user.getDialogs().add(newDialog);
+        participantUser.getDialogs().add(newDialog);
     }
 }

@@ -1,13 +1,10 @@
 package org.codet.caseidilla.user.credentials.service.impl;
 
-import java.util.Collections;
-import java.util.Optional;
-
-import javax.transaction.Transactional;
-
+import lombok.RequiredArgsConstructor;
 import org.codet.caseidilla.chat.entity.Dialog;
 import org.codet.caseidilla.chat.repository.DialogRepository;
 import org.codet.caseidilla.exception.CaseidillaException;
+import org.codet.caseidilla.user.credentials.dto.CreatePinDto;
 import org.codet.caseidilla.user.credentials.dto.UserLoginDto;
 import org.codet.caseidilla.user.credentials.dto.UserRegistrationDto;
 import org.codet.caseidilla.user.credentials.service.CredentialsService;
@@ -19,7 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -75,13 +74,17 @@ public class CredentialsServiceImpl implements CredentialsService {
 
     @Override
     @Transactional
-    public void setPin(String login, String pin) {
+    public void setPin(String login, CreatePinDto pin) {
         User user = userRepository.findById(login)
                 .orElseThrow(() -> new CaseidillaException("User not found"));
         if (user.getPin() == null) {
-            user.setPin(pin);
+            user.setPin(pin.getPin());
         } else {
-            throw new CaseidillaException("Pin is already set");
+            if (pin.getOldPin().equals(user.getPin())) {
+                user.setPin(pin.getPin());
+            } else {
+                throw new CaseidillaException("Pin is already set");
+            }
         }
     }
 }

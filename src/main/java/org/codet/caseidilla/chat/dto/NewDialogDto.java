@@ -1,4 +1,4 @@
-package org.codet.caseidilla.user.credentials.dto;
+package org.codet.caseidilla.chat.dto;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class PinDto {
-    private String pin;
-    private String oldPin;
+public class NewDialogDto {
+    private String participant;
+    private boolean secret;
 }

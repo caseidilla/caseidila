@@ -17,7 +17,6 @@ public class ChatController {
     private final DialogService dialogService;
     private final MessageService messageService;
 
-
     @GetMapping("/{login}/dialogs")
     public List<DialogDto> listDialogs(@PathVariable String login) {
         return dialogService.listDialogs(login);
@@ -34,7 +33,7 @@ public class ChatController {
     }
 
     @PostMapping("/{login}/dialog/send")
-    public void sendMessage(@RequestParam SendMessageRequestDto sendMessage, @PathVariable String login) {
+    public void sendMessage(@RequestBody SendMessageRequestDto sendMessage, @PathVariable String login) {
         messageService.sendMessage(IncomingMessageDto.builder()
                 .body(sendMessage.getBody())
                 .to(sendMessage.getParticipant())
@@ -50,6 +49,11 @@ public class ChatController {
     @PostMapping("/{login}/dialog/hide")
     public void hideDialog(@RequestBody HideDialogRequestDto request, @PathVariable String login) {
         dialogService.hideDialog(request, login);
+    }
+
+    @PostMapping("/{login}/dialog/new")
+    public void createDialog(@RequestBody NewDialogDto request, @PathVariable String login) {
+        dialogService.createDialog(request, login);
     }
 
 }

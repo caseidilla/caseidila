@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,6 +43,7 @@ public class MessageServiceImpl implements MessageService {
                                         .type(MessageDto.MessageType.RECEIVED)
                                         .build())
                 )
+                .sorted(Comparator.comparing(MessageDto::getTimestamp))
                 .collect(Collectors.toList());
     }
 

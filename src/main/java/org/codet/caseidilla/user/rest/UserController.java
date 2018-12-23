@@ -2,7 +2,7 @@ package org.codet.caseidilla.user.rest;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.codet.caseidilla.user.credentials.dto.PinDto;
+import org.codet.caseidilla.user.credentials.dto.CreatePinDto;
 import org.codet.caseidilla.user.credentials.dto.UserLoginDto;
 import org.codet.caseidilla.user.credentials.dto.UserRegistrationDto;
 import org.codet.caseidilla.user.credentials.service.CredentialsService;
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping("/{login}/setPin")
-    public void setPin(@RequestBody PinDto pin, @PathVariable String login) {
-        credentialsService.setPin(login, pin.getPin());
+    public void setPin(@RequestBody CreatePinDto pin, @PathVariable String login) {
+        credentialsService.setPin(login, pin);
     }
 }
