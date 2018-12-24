@@ -2,10 +2,7 @@ package org.codet.caseidilla.chat.service.impl;
 
 import com.google.common.collect.ImmutableSet;
 import lombok.RequiredArgsConstructor;
-import org.codet.caseidilla.chat.dto.ChangeDialogNameRequestDto;
-import org.codet.caseidilla.chat.dto.DialogDto;
-import org.codet.caseidilla.chat.dto.HideDialogRequestDto;
-import org.codet.caseidilla.chat.dto.NewDialogDto;
+import org.codet.caseidilla.chat.dto.*;
 import org.codet.caseidilla.chat.entity.Dialog;
 import org.codet.caseidilla.chat.repository.DialogRepository;
 import org.codet.caseidilla.chat.service.DialogService;
@@ -142,5 +139,30 @@ public class DialogServiceImpl implements DialogService {
         newDialog = dialogRepository.save(newDialog);
         user.getDialogs().add(newDialog);
         participantUser.getDialogs().add(newDialog);
+    }
+
+    @Override
+    @Transactional
+    public void deleteDialog(DeleteDialogDto request, String login) {
+        User user = userRepository.findById(login)
+                .orElseThrow(() -> new CaseidillaException("User not found"));
+        User participantUser = userRepository.findById(request.getParticipant())
+                .orElseThrow(() -> new CaseidillaException("Can't find participant"));
+        Dialog foundDialog = user.getDialogs()
+                .stream()
+                .filter(dialog -> dialog.getUsers().contains(participantUser))
+                .findFirst()
+                .orElseThrow(() -> new CaseidillaException("Dialog is not found"));
+        user.getDialogs().remove(foundDialog);
+        participantUser.getDialogs().remove(foundDialog);
+        dialogRepository.delete(foundDialog);
+    }
+
+    @Override
+    @Transactional
+    public FindDialogResponseDto findDialog(String participant, String login) {
+        return FindDialogResponseDto.builder()
+                .found(userRepository.findById(participant).isPresent())
+                .build();
     }
 }

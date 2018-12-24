@@ -18,6 +18,6 @@ public class SecretCleanUpExecutor {
     @Scheduled(fixedRate = 5_000L)
     @Transactional
     void cleanUp() {
-        secretRepository.deleteByTimestampBefore(Instant.now().minus(30, ChronoUnit.SECONDS));
+        secretRepository.deleteByTimestampBefore(Instant.now().minus(300, ChronoUnit.SECONDS));
     }
 }

@@ -56,5 +56,14 @@ public class ChatController {
         dialogService.createDialog(request, login);
     }
 
+    @PostMapping("/{login}/dialog/delete")
+    public void deleteDialog(@RequestBody DeleteDialogDto request, @PathVariable String login) {
+        dialogService.deleteDialog(request, login);
+    }
+
+    @GetMapping("/{login}/find")
+    public FindDialogResponseDto findDialog(@RequestParam String participant, @PathVariable String login) {
+        return dialogService.findDialog(participant, login);
+    }
 }
 
