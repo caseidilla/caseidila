@@ -101,7 +101,8 @@ public class DialogServiceImpl implements DialogService {
         if (!request.getPin().equals(user.getPin())) {
             throw new CaseidillaException("Wrong pin");
         }
-        findAndValidateDialog(login, request.getParticipant()).setHidden(true);
+        Dialog dialog = findAndValidateDialog(login, request.getParticipant());
+        dialog.setHidden(!dialog.isHidden());
     }
 
     @Override
