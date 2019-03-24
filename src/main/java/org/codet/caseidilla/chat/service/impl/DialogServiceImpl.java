@@ -31,23 +31,7 @@ public class DialogServiceImpl implements DialogService {
                 .getDialogs();
         return dialogs.stream()
                 .filter(dialog -> !dialog.isHidden())
-                .map(dialog -> {
-                    Set<User> users = dialog.getUsers();
-                    if (users.size() != 2) {
-                        throw new CaseidillaException("Dialog does not have 2 participants");
-                    }
-                    User participant = users.stream()
-                            .filter(u -> !u.getLogin().equals(login))
-                            .findFirst()
-                            .get();
-                    String dialogName = dialog.getName();
-                    return DialogDto.builder()
-                            .login(participant.getLogin())
-                            .name(dialogName == null ? participant.getLogin() : dialogName)
-                            .secret(dialog.isSecret())
-                            .hidden(dialog.isHidden())
-                            .build();
-                })
+                .map(dialog -> toDialogDto(login, dialog))
                 .collect(Collectors.toList());
     }
 
@@ -63,23 +47,7 @@ public class DialogServiceImpl implements DialogService {
         }
         Set<Dialog> dialogs = user.getDialogs();
         return dialogs.stream()
-                .map(dialog -> {
-                    Set<User> users = dialog.getUsers();
-                    if (users.size() != 2) {
-                        throw new CaseidillaException("Dialog does not have 2 participants");
-                    }
-                    User participant = users.stream()
-                            .filter(u -> !u.getLogin().equals(login))
-                            .findFirst()
-                            .get();
-                    String dialogName = dialog.getName();
-                    return DialogDto.builder()
-                            .login(participant.getLogin())
-                            .name(dialogName == null ? participant.getLogin() : dialogName)
-                            .secret(dialog.isSecret())
-                            .hidden(dialog.isHidden())
-                            .build();
-                })
+                .map(dialog -> toDialogDto(login, dialog))
                 .collect(Collectors.toList());
     }
 
@@ -102,7 +70,7 @@ public class DialogServiceImpl implements DialogService {
             throw new CaseidillaException("Wrong pin");
         }
         Dialog dialog = findAndValidateDialog(login, request.getParticipant());
-        dialog.setHidden(!dialog.isHidden());
+        dialog.setHidden(true);
     }
 
     @Override
@@ -164,6 +132,24 @@ public class DialogServiceImpl implements DialogService {
     public FindDialogResponseDto findDialog(String participant, String login) {
         return FindDialogResponseDto.builder()
                 .found(userRepository.findById(participant).isPresent())
+                .build();
+    }
+
+    private DialogDto toDialogDto(String login, Dialog dialog) {
+        Set<User> users = dialog.getUsers();
+        if (users.size() != 2) {
+            throw new CaseidillaException("Dialog does not have 2 participants");
+        }
+        User participant = users.stream()
+                .filter(u -> !u.getLogin().equals(login))
+                .findFirst()
+                .get();
+        String dialogName = dialog.getName();
+        return DialogDto.builder()
+                .login(participant.getLogin())
+                .name(dialogName == null ? participant.getLogin() : dialogName)
+                .secret(dialog.isSecret())
+                .hidden(dialog.isHidden())
                 .build();
     }
 }
