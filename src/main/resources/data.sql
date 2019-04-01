@@ -1,5 +1,5 @@
-INSERT INTO USER (login, password)
-values ('loupa', '111');
+INSERT INTO USER (login, password, pin)
+values ('loupa', '111', '11');
 INSERT INTO USER (login, password)
 values ('poupa', '111');
 INSERT INTO USER (login, password)
@@ -11,7 +11,7 @@ values ('loupa', -1);
 INSERT INTO USER_DIALOG(login, id)
 values ('poupa', -1);
 INSERT INTO DIALOG (id, name, secret, hidden)
-values (-2, null, false, false);
+values (-2, null, false, true);
 INSERT INTO USER_DIALOG(login, id)
 values ('loupa', -2);
 INSERT INTO USER_DIALOG(login, id)
