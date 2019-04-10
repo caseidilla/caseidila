@@ -20,3 +20,6 @@ INSERT INTO MESSAGE(sender, timestamp, receiver, body)
 values ('loupa', parsedatetime('17-09-2012 18:47:52.69', 'dd-MM-yyyy hh:mm:ss.SS'), 'poupa', 'hi');
 INSERT INTO MESSAGE(sender, timestamp, receiver, body)
 values ('poupa', parsedatetime('17-09-2013 18:47:52.69', 'dd-MM-yyyy hh:mm:ss.SS'), 'loupa', 'hello');
+insert into secret(code, user, timestamp)
+values('a', 'loupa', parsedatetime('17-09-2030 18:47:52.69', 'dd-MM-yyyy hh:mm:ss.SS'))
+
